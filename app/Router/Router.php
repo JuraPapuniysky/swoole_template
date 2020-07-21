@@ -35,9 +35,9 @@ class Router
     public function getHandlerVars(): array
     {
         $httpMethod = $this->request->getMethod();
-        $uri = $this->request->getUri();
+        $uri = $this->request->getUri()->getHost() . $this->request->getUri()->getPath();
 
-        var_dump($uri);
+        var_dump($uri, $httpMethod);
 
         if (false !== $pos = strpos($uri, '?')) {
             $uri = substr($uri, 0, $pos);

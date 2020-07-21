@@ -2,5 +2,5 @@
 
 //method, uri, controller@action
 return [
-    ['GET', '/app/', [\App\Controllers\AppController::class, 'index']],
+    ['GET', '/app/', [\App\Controllers\Http\AppController::class, 'index']],
 ];

@@ -5,7 +5,10 @@
         "php-di/php-di": "^6.2",
         "nikic/fast-route": "^1.3",
         "psr/http-message": "^1.0",
-        "phputil/json": "^1.3"
+        "phputil/json": "^1.3",
+        "psr/http-factory": "^1.0",
+        "nyholm/psr7": "^1.3",
+        "imefisto/psr-swoole": "^1.0"
     },
     "autoload": {
         "psr-4": {
