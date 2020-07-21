@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use Http\Message\ResponseFactory;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use phputil\JSON;
 use Psr\Http\Message\ResponseInterface;
@@ -17,7 +16,7 @@ class Controller
 
         $response = $responseFactory->createResponse($code);
         $steam = $responseFactory->createStream(JSON::encode($data));
-        $response->withBody($steam);
+        $response = $response->withBody($steam);
 
         return $response;
     }
