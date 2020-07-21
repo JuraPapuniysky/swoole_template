@@ -10,10 +10,10 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class AppController extends Controller
 {
-    public function index(ServerRequestInterface $request): ResponseInterface
+    public function index(ServerRequestInterface $request, string $message): ResponseInterface
     {
         return $this->response([
-            'message' => 'Hello World',
+            'message' => $message,
         ], 200);
     }
 }

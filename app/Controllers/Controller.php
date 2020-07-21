@@ -17,6 +17,7 @@ class Controller
         $response = $responseFactory->createResponse($code);
         $steam = $responseFactory->createStream(JSON::encode($data));
         $response = $response->withBody($steam);
+        $response = $response->withStatus($code);
 
         return $response;
     }

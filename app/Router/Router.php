@@ -4,24 +4,21 @@ declare(strict_types=1);
 
 namespace App\Router;
 
+use App\Controllers\ErrorController;
 use App\Exceptions\NotAllowedHttpException;
 use App\Exceptions\NotFoundHttpException;
 use DI\Container;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use function FastRoute\simpleDispatcher;
 
 class Router
 {
     private Dispatcher $dispatcher;
 
-    private RequestInterface $request;
-
-    public function setRequest(RequestInterface $request): void
-    {
-        $this->request = $request;
-    }
+    private Container $container;
 
     public function setRoutes(array $routingConfig): void
     {
@@ -32,10 +29,15 @@ class Router
         });
     }
 
-    public function getHandlerVars(): array
+    public function setContainer(Container $container): void
     {
-        $httpMethod = $this->request->getMethod();
-        $uri = $this->request->getUri()->getPath();
+        $this->container = $container;
+    }
+
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        $httpMethod = $request->getMethod();
+        $uri = $request->getUri()->getPath();
 
         if (false !== $pos = strpos($uri, '?')) {
             $uri = substr($uri, 0, $pos);
@@ -46,22 +48,25 @@ class Router
         $routeInfo = $this->dispatcher->dispatch($httpMethod, $uri);
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
-                throw new NotFoundHttpException('Not found');
+                $code = 404;
+                $message = 'Not found';
+
+                return $this->container->call([ErrorController::class, 'error'], [$code, $message]);
                 break;
             case Dispatcher::METHOD_NOT_ALLOWED:
-                throw new NotAllowedHttpException('Method not allowed');
+                $code = 403;
+                $message = 'Method not allowed';
+
+                return $this->container->call([ErrorController::class, 'error'], [$code, $message]);
                 break;
             case Dispatcher::FOUND:
                 $handler = $routeInfo[1];
-                $vars['request'] = $this->request;
+                $vars['request'] = $request;
                 foreach ($routeInfo[2] as $varName => $value) {
                     $vars[$varName] = $value;
                 }
 
-                return [
-                    'handler' => $handler,
-                    'vars' => $vars,
-                ];
+                return $this->container->call($handler, $vars);
 
                 break;
         }
