@@ -44,6 +44,8 @@ $server->on("request", function (Request $request, Response $response) use (
 
     $psrResponse = $app->run();
 
+    $response->setStatusCode($psrResponse->getStatusCode());
+
     $responseMerger->toSwoole($psrResponse, $response);
 });
 
