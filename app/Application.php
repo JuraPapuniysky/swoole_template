@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Router\Router;
-use DI\Container;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -19,9 +19,9 @@ class Application
 
     private Router $router;
 
-    private Container $container;
+    private ContainerInterface $container;
 
-    public function __construct(array $config, Container $container, Router $router)
+    public function __construct(array $config, ContainerInterface $container, Router $router)
     {
         $this->config = $config;
         $this->router = $router;
