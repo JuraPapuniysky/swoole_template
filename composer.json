@@ -1,6 +1,6 @@
 {
     "require": {
-        "php": "^7.4.7",
+        "php": "^8.0",
         "swoole/ide-helper": "@dev",
         "php-di/php-di": "^6.2",
         "nikic/fast-route": "^1.3",

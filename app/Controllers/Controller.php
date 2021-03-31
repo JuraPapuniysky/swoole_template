@@ -21,4 +21,9 @@ class Controller
 
         return $response;
     }
+
+    protected function middleware(string $class, array $options): void
+    {
+
+    }
 }

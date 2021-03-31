@@ -8,38 +8,30 @@ use Swoole\Http\Response;
 use \Nyholm\Psr7\Factory\Psr17Factory;
 use PsrSwoole\ResponseMerger;
 use PsrSwoole\Factory\NyholmRequestFactory as ServerRequestFactory;
+use App\Factories\ApplicationFactory;
 
 $config = require __DIR__ . '/../config/config.php';
 
-$container = new \DI\Container();
-$router = new \App\Router\Router();
 $uriFactory = new Psr17Factory();
 $streamFactory = new Psr17Factory;
 $responseFactory = new Psr17Factory;
 $uploadedFileFactory = new Psr17Factory;
 $responseMerger = new ResponseMerger;
 $serverRequestFactory = new ServerRequestFactory();
-$app = new \App\Application($config, $container, $router);
 
+$server = new Swoole\HTTP\Server($config['server']['host'], $config['server']['port']);
 
-$server = new Swoole\HTTP\Server("127.0.0.1", 8080);
-
-$server->on("start", function (Server $server) {
-    echo "Swoole http server is started at http://127.0.0.1:8080\n";
+$server->on("start", function (Server $server) use ($config) {
+    echo "Swoole http server is started at http://{$config['server']['host']}:{$config['server']['port']}\n";
 });
-
 $server->on("request", function (Request $request, Response $response) use (
-    $app,
-    $uriFactory,
-    $streamFactory,
-    $responseFactory,
-    $uploadedFileFactory,
+    $config,
     $responseMerger,
     $serverRequestFactory
 ) {
 
     $serverRequest = $serverRequestFactory->createRequest($request);
-
+    $app = ApplicationFactory::create($config);
     $app->setRequest($serverRequest);
 
     $psrResponse = $app->run();
